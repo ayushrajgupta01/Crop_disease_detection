@@ -1,0 +1,24 @@
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# ML files
+*.h5
+data/
+
+# Environment
+.env
+
+# Uploads
+uploads/
+
+# Database (VERY IMPORTANT)
+backend/db/
+
+# MongoDB locks
+*.lock
+WiredTiger*

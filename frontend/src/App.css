@@ -1,0 +1,43 @@
+/* Custom Scrollbar for Cyber Look */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 157, 0.2);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00ff9d;
+}
+
+.container {
+  max-width: 1400px;
+}
+
+/* Glass effect refinement */
+.cyber-glass {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cyber-glass:hover {
+  border-color: rgba(0, 255, 157, 0.3);
+  box-shadow: 0 0 40px rgba(0, 255, 157, 0.05);
+}
+
+/* Monospace highlighting */
+.mono-bold {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 1rem;
+  }
+}
