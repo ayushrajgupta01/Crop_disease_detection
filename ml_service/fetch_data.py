@@ -7,7 +7,8 @@ def fetch_and_merge():
     # 1. Define datasets
     datasets = [
         {"slug": "emmarex/plantdisease", "zip_name": "plantdisease.zip", "folder_name": "plantvillage"},
-        {"slug": "mahmoudshaheen1134/lemon-leaf-disease-dataset-lldd", "zip_name": "lemon-leaf-disease-dataset-lldd.zip", "folder_name": "lemon_dataset"}
+        {"slug": "mahmoudshaheen1134/lemon-leaf-disease-dataset-lldd", "zip_name": "lemon-leaf-disease-dataset-lldd.zip", "folder_name": "lemon_dataset"},
+        {"slug": "thegoanpanda/rice-crop-diseases", "zip_name": "rice-crop-diseases.zip", "folder_name": "rice_dataset"}
     ]
     
     # 2. Setup paths
@@ -75,6 +76,23 @@ def fetch_and_merge():
                 target_path = os.path.join(merged_dir, f"Lemon_{clean_name}")
                 if not os.path.exists(target_path):
                     print(f"Adding Lemon class: Lemon_{clean_name}")
+                    shutil.copytree(item_path, target_path)
+
+    # Process Rice (add 'Rice_' prefix)
+    rice_source = os.path.join(data_dir, "rice_dataset", "Rice_Diseases")
+    if not os.path.exists(rice_source):
+        # Fallback to direct rice_dataset folder
+        rice_source = os.path.join(data_dir, "rice_dataset")
+
+    if os.path.exists(rice_source):
+        for item in os.listdir(rice_source):
+            item_path = os.path.join(rice_source, item)
+            if os.path.isdir(item_path):
+                # Clean name: remove spaces
+                clean_name = item.replace(" ", "_")
+                target_path = os.path.join(merged_dir, f"Rice_{clean_name}")
+                if not os.path.exists(target_path):
+                    print(f"Adding Rice class: Rice_{clean_name}")
                     shutil.copytree(item_path, target_path)
 
     print(f"Data merge complete! Merged dataset located at: {merged_dir}")

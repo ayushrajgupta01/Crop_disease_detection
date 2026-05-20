@@ -12,6 +12,10 @@ Pepper__bell___healthy
 Potato___Early_blight
 Potato___Late_blight
 Potato___healthy
+Rice_Bacterial_Blight_Disease
+Rice_Blast_Disease
+Rice_Brown_Spot_Disease
+Rice_False_Smut_Disease
 Tomato_Bacterial_spot
 Tomato_Early_blight
 Tomato_Late_blight
