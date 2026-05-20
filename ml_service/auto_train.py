@@ -1,41 +1,32 @@
 import os
-import zipfile
-import subprocess
 import sys
+import subprocess
 
 def setup_and_train():
-    dataset = "emmarex/plantdisease"
-    print(f"Starting automation for: {dataset}")
+    print(">>> Initializing Data Pipeline...")
     
-    # Set environment variable for Kaggle API to look in current directory
-    os.environ['KAGGLE_CONFIG_DIR'] = os.getcwd()
-    
-    # 1. Create data directory
-    if not os.path.exists('data'):
-        os.makedirs('data')
-
+    # 1. Fetch and Merge all datasets (PlantVillage, Lemon, and Rice)
     try:
-        # 2. Download from Kaggle
-        print("Downloading dataset (this may take a few minutes)...")
-        kaggle_path = r"C:\Users\anuna\AppData\Roaming\Python\Python314\Scripts\kaggle.exe"
-        subprocess.run([kaggle_path, "datasets", "download", "-d", dataset, "-p", "data"], check=True)
-        
-        # 3. Unzip
-        print("Extracting files...")
-        zip_path = os.path.join("data", "plantdisease.zip")
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall("data/plantvillage")
-        
-        print("Data ready!")
-
-        # 4. Start Training
-        print("Launching Training Engine...")
-        # Import the train_model function from our existing train.py
-        from train import train_model
-        train_model("data/plantvillage/PlantVillage/PlantVillage")
-        
+        from fetch_data import fetch_and_merge
+        fetch_and_merge()
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error fetching data: {e}")
+        return
+
+    # 2. Start Training using the merged dataset
+    print("\n>>> Launching Training Engine...")
+    try:
+        from train import train_model
+        # Use absolute or relative path consistently
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        merged_dir = os.path.join(base_dir, 'data', 'merged_dataset')
+        
+        if os.path.exists(merged_dir):
+            train_model(merged_dir)
+        else:
+            print(f"Error: Merged dataset not found at {merged_dir}")
+    except Exception as e:
+        print(f"Error during training: {e}")
 
 if __name__ == "__main__":
     setup_and_train()

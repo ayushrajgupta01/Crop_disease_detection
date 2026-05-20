@@ -141,6 +141,22 @@ def predict():
                 "Lemon_Spider_Mites": {
                     "treatment": "Increase humidity. Use Neem oil or a strong water stream to dislodge mites.",
                     "fertilizer": "Avoid high Nitrogen, which can attract more mites."
+                },
+                "Rice_Bacterial_Blight_Disease": {
+                    "treatment": "Use disease-free seeds. Treat seeds with hot water (52-54°C). Avoid excessive nitrogen.",
+                    "fertilizer": "Use balanced N-P-K. Avoid excessive Nitrogen; split applications are recommended."
+                },
+                "Rice_Blast_Disease": {
+                    "treatment": "Apply fungicides like Tricyclazole. Plant resistant varieties. Avoid field activities when wet.",
+                    "fertilizer": "Balance Nitrogen with adequate Potassium to strengthen plant tissues."
+                },
+                "Rice_Brown_Spot_Disease": {
+                    "treatment": "Use Mancozeb or Tricyclazole sprays. Improve soil drainage and seed treatment.",
+                    "fertilizer": "Provide Phosphorus to promote root health. Avoid high Nitrogen levels."
+                },
+                "Rice_False_Smut_Disease": {
+                    "treatment": "Apply Propiconazole at booting stage. Remove and destroy infected panicles.",
+                    "fertilizer": "Use split nitrogen applications and avoid late-season nitrogen excess."
                 }
             }
             
