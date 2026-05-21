@@ -1,11 +1,9 @@
 import React from 'react';
-import riceDiseaseImg from '../assets/rice_disease.png';
-import tomatoBlightImg from '../assets/tomato_blight.png';
 
 const Community = () => {
   const posts = [
-    { id: 1, user: "Farmer Ramesh", crop: "Rice", time: "2h ago", text: "Seeing some yellow spots on my rice leaves. Any advice?", image: riceDiseaseImg, likes: 12, comments: 4 },
-    { id: 2, user: "Suresh P.", crop: "Tomato", time: "5h ago", text: "Successfully treated Early Blight using copper fungicide recommended here!", image: tomatoBlightImg, likes: 45, comments: 8 },
+    { id: 1, user: "Farmer Ramesh", crop: "Rice", time: "2h ago", text: "Seeing some yellow spots on my rice leaves. Any advice?", image: "https://images.unsplash.com/photo-1536630596251-b01c62536286?auto=format&fit=crop&q=80&w=400", likes: 12, comments: 4 },
+    { id: 2, user: "Suresh P.", crop: "Tomato", time: "5h ago", text: "Successfully treated Early Blight using copper fungicide recommended here!", image: "https://images.unsplash.com/photo-1592840331052-16e15c2c6f95?auto=format&fit=crop&q=80&w=400", likes: 45, comments: 8 },
   ];
 
   return (
