@@ -140,17 +140,321 @@ button {
 }
 
 /* Utility Classes */
-.flex { display: flex; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.gap-4 { gap: 1rem; }
-.mt-4 { margin-top: 1rem; }
-.grid { display: grid; }
-.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.grid {
+  display: grid;
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
 
 @media (max-width: 768px) {
   .sidebar {
-    display: none; /* Mobile menu logic needed */
+    display: none;
+    /* Mobile menu logic needed */
   }
+}
+
+/* Enhanced Plant Library Styles */
+.plant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.plant-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.plant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.plant-card-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.plant-card-content {
+  padding: 1.5rem;
+}
+
+.plant-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.plant-card-type {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.plant-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.plant-tag {
+  font-size: 0.75rem;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Plant Detail Page Layout */
+.plant-detail-container {
+  background: white;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.plant-detail-hero {
+  position: relative;
+  width: 100%;
+  height: 420px;
+}
+
+.plant-detail-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.plant-detail-close-btn {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s;
+  z-index: 10;
+}
+
+.plant-detail-close-btn:hover {
+  background-color: #ffffff;
+}
+
+.plant-detail-sheet {
+  padding: 2.5rem 3rem;
+  background-color: white;
+  margin-top: -30px;
+  position: relative;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.03);
+}
+
+.plant-detail-header {
+  margin-bottom: 2rem;
+}
+
+.plant-detail-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.plant-detail-scientific {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 0.25rem;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+/* Plant detail tab selectors */
+.plant-tab-container {
+  display: flex;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2.25rem;
+}
+
+.plant-tab-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background-color: transparent;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.plant-tab-btn:hover {
+  color: var(--text-main);
+  background-color: var(--bg-main);
+}
+
+.plant-tab-btn.active {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border-color: transparent;
+}
+
+/* Plant Overview List styling */
+.plant-overview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.plant-overview-banner {
+  background-color: #f3f6f2;
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.plant-overview-banner-icon {
+  width: 40px;
+  height: 40px;
+  background-color: #dbe7e1;
+  color: var(--primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.plant-overview-banner-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.35rem;
+}
+
+.plant-overview-banner-desc {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.plant-info-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.15rem;
+}
+
+.plant-info-icon-wrapper {
+  width: 38px;
+  height: 38px;
+  background-color: #f1f3ec;
+  color: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.plant-info-content {
+  flex-grow: 1;
+}
+
+.plant-info-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.4rem;
+}
+
+.plant-info-text {
+  font-size: 0.95rem;
+  color: #3f4f3f;
+  line-height: 1.6;
+}
+
+/* Plant Requirements Grid List */
+.plant-req-list {
+  display: flex;
+  flex-direction: column;
+  background-color: #f9fafb;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.plant-req-row {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  padding: 1rem 1.75rem;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.plant-req-row:last-child {
+  border-bottom: none;
+}
+
+.plant-req-label-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+
+.plant-req-value-cell {
+  color: #374151;
+  font-size: 0.95rem;
+  font-weight: 500;
 }

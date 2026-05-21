@@ -36,7 +36,7 @@ function App() {
         <div className="logo">
           <span>🛡️</span> CropGuard Pro
         </div>
-        
+
         <nav className="nav-menu">
           {navItems.map((item) => (
             <div
