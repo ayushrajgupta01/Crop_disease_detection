@@ -35,7 +35,10 @@ import {
   ChevronUp
 } from 'lucide-react-native';
 import { Colors } from '../theme/colors';
+import { screenStyles } from '../theme/screenStyles';
+import ScreenHero from '../components/ScreenHero';
 import { cropsData } from '../data/cropsData';
+import { Sparkles } from 'lucide-react-native';
 
 const getSectionStyle = (title) => {
   switch (title.toLowerCase()) {
@@ -228,68 +231,84 @@ const PlantLibraryScreen = () => {
 
   return (
     <View style={styles.mainWrapper}>
-      <StatusBar barStyle="dark-content" />
-      <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Plant Library</Text>
-          <Text style={styles.subtitle}>Comprehensive database for crop management.</Text>
-        </View>
+      <StatusBar barStyle="light-content" />
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <ScreenHero
+          badgeIcon={<Sparkles size={12} color="#86efac" />}
+          badgeText="CROP ENCYCLOPEDIA"
+          title="Plant Library"
+          subtitle="Browse crops, care requirements, and expert growing guides."
+          stats={[
+            { value: `${plants.length}`, label: 'Crops' },
+            { value: '2', label: 'Tabs' },
+            { value: 'Pro', label: 'Guides' },
+          ]}
+          gradient="forest"
+        />
 
-        <View style={styles.searchContainer}>
-          <Search size={20} color={Colors.textMuted} style={styles.searchIcon} />
-          <TextInput 
-            style={styles.searchInput}
-            placeholder="Search crops, varieties..."
-            value={search}
-            onChangeText={setSearch}
-          />
-        </View>
+        <View style={screenStyles.body}>
+          <View style={screenStyles.searchBar}>
+            <Search size={20} color={Colors.textMuted} />
+            <TextInput
+              style={screenStyles.searchInput}
+              placeholder="Search crops, varieties…"
+              placeholderTextColor={Colors.textMuted}
+              value={search}
+              onChangeText={setSearch}
+            />
+          </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Encyclopedia Crops</Text>
-          {filteredPlants.map(plant => {
-            const statusConfig = getStatusStyle(plant.status);
-            return (
-              <TouchableOpacity 
-                key={plant.id} 
-                style={styles.plantCard}
-                onPress={() => handleOpenCrop(plant)}
-              >
-                {imageErrors[plant.id] ? (
-                  <View style={[styles.plantThumbnail, styles.imageFallbackContainer]}>
-                    <Leaf size={24} color="#0d9488" />
+          <Text style={screenStyles.sectionEyebrow}>Database</Text>
+          <Text style={screenStyles.sectionTitle}>Encyclopedia crops</Text>
+          <View style={styles.gridContainer}>
+            {filteredPlants.map(plant => {
+              const statusConfig = getStatusStyle(plant.status);
+              return (
+                <TouchableOpacity 
+                  key={plant.id} 
+                  style={styles.plantCard}
+                  onPress={() => handleOpenCrop(plant)}
+                >
+                  <View style={styles.cardImageContainer}>
+                    {imageErrors[plant.id] ? (
+                      <View style={[styles.plantThumbnail, styles.imageFallbackContainer]}>
+                        <Leaf size={24} color="#0d9488" />
+                      </View>
+                    ) : (
+                      <Image 
+                        source={{ uri: plant.image }} 
+                        style={styles.plantThumbnail} 
+                        onError={() => handleImageError(plant.id)}
+                      />
+                    )}
+                    <View style={[styles.statusBadge, { backgroundColor: statusConfig.bg }]}>
+                      <Text style={[styles.statusText, { color: statusConfig.text }]}>{plant.status}</Text>
+                    </View>
                   </View>
-                ) : (
-                  <Image 
-                    source={{ uri: plant.image }} 
-                    style={styles.plantThumbnail} 
-                    onError={() => handleImageError(plant.id)}
-                  />
-                )}
-                <View style={styles.plantInfo}>
-                  <Text style={styles.plantName}>{plant.name}</Text>
-                  <Text style={styles.plantVariety}>{plant.variety} • {plant.family}</Text>
-                </View>
-                <View style={[styles.statusBadge, { backgroundColor: statusConfig.bg }]}>
-                  <Text style={[styles.statusText, { color: statusConfig.text }]}>{plant.status}</Text>
-                </View>
-                <ChevronRight size={20} color={Colors.border} />
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+                  <View style={styles.plantInfo}>
+                    <Text style={styles.plantName} numberOfLines={1}>{plant.name}</Text>
+                    <Text style={styles.plantVariety} numberOfLines={1}>{plant.variety} • {plant.family}</Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
-        <View style={styles.section}>
+          <Text style={[screenStyles.sectionEyebrow, { marginTop: 8 }]}>Learning</Text>
           <View style={styles.rowBetween}>
-            <Text style={styles.sectionTitle}>Expert Guides</Text>
-            <Text style={styles.viewAll}>View All</Text>
+            <Text style={screenStyles.sectionTitle}>Expert guides</Text>
+            <Text style={styles.viewAll}>View all</Text>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.guideScroll}>
             {[
               { id: 1, title: 'Organic Pest Control', time: '5 min read' },
               { id: 2, title: 'Soil pH Management', time: '8 min read' },
-              { id: 3, title: 'Irrigation Timing', time: '4 min read' }
-            ].map(guide => (
+              { id: 3, title: 'Irrigation Timing', time: '4 min read' },
+            ].map((guide) => (
               <TouchableOpacity key={guide.id} style={styles.guideCard}>
                 <BookOpen size={24} color={Colors.primary} />
                 <Text style={styles.guideTitle}>{guide.title}</Text>
@@ -390,94 +409,68 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 20,
+    paddingBottom: 28,
   },
-  header: {
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: Colors.textMain,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: Colors.textMuted,
-    marginTop: 5,
-  },
-  searchContainer: {
-    margin: 20,
-    marginTop: 0,
+  gridContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.white,
-    borderRadius: 16,
-    paddingHorizontal: 15,
-    height: 50,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  searchIcon: {
-    marginRight: 10,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 15,
-  },
-  section: {
-    padding: 20,
-    paddingTop: 0,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.textMain,
-    marginBottom: 15,
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   plantCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: '48%',
     backgroundColor: Colors.white,
-    padding: 12,
     borderRadius: 20,
-    marginBottom: 12,
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: Colors.border,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  cardImageContainer: {
+    position: 'relative',
+    width: '100%',
+    height: 120,
   },
   plantThumbnail: {
-    width: 60,
-    height: 60,
-    borderRadius: 12,
-    marginRight: 15,
+    width: '100%',
+    height: '100%',
+    borderRadius: 0,
   },
   plantInfo: {
-    flex: 1,
+    padding: 12,
   },
   plantName: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
     color: Colors.textMain,
   },
   plantVariety: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.textMuted,
     marginTop: 2,
   },
   statusBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
-    marginRight: 10,
+    zIndex: 10,
   },
   statusText: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: 'bold',
   },
   rowBetween: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 14,
   },
   viewAll: {
     fontSize: 14,

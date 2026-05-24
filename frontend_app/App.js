@@ -9,11 +9,14 @@ import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Modal,
+  Image,
+  Animated
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Camera, Bot, CloudRain, Library, Users, LogOut, Shield, MapPin, User, LogIn, Newspaper } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -132,12 +135,16 @@ function MainAppContent({ initialTab, setContinueAsGuest, setIsLoggedIn }) {
         )
       })}
     >
-      <Tab.Screen name="Diagnostics" component={DiagnosticsScreen} options={{ title: 'Scan Crop' }} />
-      <Tab.Screen name="AgroBot" component={AgroBotScreen} options={{ title: 'AgroBot AI' }} />
-      <Tab.Screen name="AgriNews" component={AgriNewsScreen} options={{ title: 'AgriNews' }} />
-      <Tab.Screen name="Environment" component={EnvironmentScreen} options={{ title: 'Alerts' }} />
-      <Tab.Screen name="Library" component={LibraryScreen} options={{ title: 'Plant Library' }} />
-      <Tab.Screen name="Community" component={CommunityScreen} options={{ title: 'Community' }} />
+      <Tab.Screen
+        name="Diagnostics"
+        component={DiagnosticsScreen}
+        options={{ title: 'Scan Crop', headerShown: false }}
+      />
+      <Tab.Screen name="AgroBot" component={AgroBotScreen} options={{ title: 'AgroBot AI', headerShown: false }} />
+      <Tab.Screen name="AgriNews" component={AgriNewsScreen} options={{ title: 'AgriNews', headerShown: false }} />
+      <Tab.Screen name="Environment" component={EnvironmentScreen} options={{ title: 'Alerts', headerShown: false }} />
+      <Tab.Screen name="Library" component={LibraryScreen} options={{ title: 'Plant Library', headerShown: false }} />
+      <Tab.Screen name="Community" component={CommunityScreen} options={{ title: 'Community', headerShown: false }} />
     </Tab.Navigator>
   );
 }
@@ -174,6 +181,11 @@ export default function App() {
     setContinueAsGuest(false);
   };
 
+  const exitGuest = () => {
+    setContinueAsGuest(false);
+    setIsLoggedIn(false);
+  };
+
   const enterAsGuestWithScreen = (screenName) => {
     setInitialTab(screenName);
     setContinueAsGuest(true);
@@ -181,6 +193,31 @@ export default function App() {
 
   // Header modal trigger for guest login
   const [headerAuthVisible, setHeaderAuthVisible] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Animated scan laser loop for landing page scanner banner
+  const scanAnim = React.useRef(new Animated.Value(0)).current;
+  React.useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(scanAnim, {
+          toValue: 1,
+          duration: 2200,
+          useNativeDriver: false,
+        }),
+        Animated.timing(scanAnim, {
+          toValue: 0,
+          duration: 2200,
+          useNativeDriver: false,
+        }),
+      ])
+    ).start();
+  }, [scanAnim]);
+
+  const scanLineTop = scanAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['5%', '70%'],
+  });
 
   const handleLandingAuthSubmit = async () => {
     if (authMode === 'login') {
@@ -229,28 +266,216 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <StatusBar style="light" />
-        <KeyboardAvoidingView
+        <LinearGradient
+          colors={['#064e3b', '#022c22']}
           style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-            <LinearGradient
-              colors={['#065f46', '#0f766e', '#115e59']}
-              style={styles.landingContainer}
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            {/* Pinned Header Section */}
+            <SafeAreaView edges={['top', 'left', 'right']} style={styles.fixedHeader}>
+              <View style={styles.headerInner}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Shield size={24} color="#10b981" />
+                  <Text style={styles.brandLogoText}>CropGuard Pro</Text>
+                </View>
+                <TouchableOpacity 
+                  style={styles.navSignInBtn} 
+                  onPress={() => {
+                    setAuthMode('login');
+                    setShowAuthModal(true);
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.navSignInBtnText}>Sign In</Text>
+                </TouchableOpacity>
+              </View>
+            </SafeAreaView>
+
+            {/* Scrollable Content */}
+            <ScrollView 
+              contentContainerStyle={styles.scrollContainer} 
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
             >
-              {/* Branding Section */}
-              <View style={styles.brandContainer}>
-                <Shield size={40} color={Colors.primary} />
-                <Text style={styles.brandTitle}>CropGuard Pro</Text>
-                <Text style={styles.brandSubtitle}>AI Diagnostics & Farmers Network</Text>
+
+              {/* NEXT-GEN Badge */}
+              <View style={styles.badgeCapsule}>
+                <Text style={styles.badgeCapsuleText}>NEXT-GEN AGRONOMY</Text>
               </View>
 
-              {/* Form Card */}
-              <View style={styles.authCard}>
-                <Text style={styles.authCardTitle}>
-                  {authMode === 'login' ? 'Welcome Back' : 'Create Account'}
+              {/* Hero Section */}
+              <View style={styles.heroSection}>
+                <Text style={styles.heroTitle}>Precision Agriculture at Your Fingertips</Text>
+                <Text style={styles.heroSubtitle}>
+                  Empowering global agriculture with AI-driven diagnostics, expert chatbot support, and a collaborative network of farmers.
                 </Text>
-                <Text style={styles.authCardSubtitle}>
+                
+                {/* AI Scanner Visual Banner */}
+                <View style={styles.scannerVisualContainer}>
+                  <Image 
+                    source={require('./assets/scanner_plant.png')} 
+                    style={styles.scannerImage}
+                    resizeMode="cover"
+                  />
+                  {/* Viewfinder Target Corners */}
+                  <View style={[styles.targetCorner, { top: 15, left: 15, borderLeftWidth: 3, borderTopWidth: 3 }]} />
+                  <View style={[styles.targetCorner, { top: 15, right: 15, borderRightWidth: 3, borderTopWidth: 3 }]} />
+                  <View style={[styles.targetCorner, { bottom: 15, left: 15, borderLeftWidth: 3, borderBottomWidth: 3 }]} />
+                  <View style={[styles.targetCorner, { bottom: 15, right: 15, borderRightWidth: 3, borderBottomWidth: 3 }]} />
+                  
+                  {/* Glassmorphic Scanning Bar */}
+                  <Animated.View style={[styles.scanLaserLine, { top: scanLineTop }]} />
+                </View>
+
+                <TouchableOpacity 
+                  style={styles.heroCtaBtn} 
+                  onPress={() => enterAsGuestWithScreen('Diagnostics')}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.heroCtaBtnText}>Start Leaf Scan  →</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Stats Row */}
+              <View style={styles.statsRow}>
+                <View style={styles.statBox}>
+                  <Text style={styles.statNumber}>98.4%</Text>
+                  <Text style={styles.statLabel}>ACCURACY</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.statBox}>
+                  <Text style={styles.statNumber}>15k+</Text>
+                  <Text style={styles.statLabel}>FARMERS</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.statBox}>
+                  <Text style={styles.statNumber}>24/7</Text>
+                  <Text style={styles.statLabel}>AGROBOT</Text>
+                </View>
+              </View>
+
+              {/* Intelligent Pillars Section */}
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Intelligent Pillars of Growth</Text>
+                <Text style={styles.sectionSubtitle}>
+                  Our platform combines advanced machine learning with human expertise to ensure your harvest is smart and resilient.
+                </Text>
+              </View>
+
+              <View style={styles.featuresGrid}>
+                {/* AI Leaf Scanner */}
+                <TouchableOpacity 
+                  style={styles.featureCardMain} 
+                  onPress={() => enterAsGuestWithScreen('Diagnostics')}
+                  activeOpacity={0.9}
+                >
+                  <View style={{ flex: 1, paddingRight: 10 }}>
+                    <Text style={styles.featureCardEmoji}>🔍</Text>
+                    <Text style={styles.featureCardTitle}>AI Leaf Scanner</Text>
+                    <Text style={styles.featureCardDesc}>Identify pests, fungi, and nutrient deficiencies with 98% accuracy in under a minute.</Text>
+                    <Text style={styles.featureCardBadge}>✓ Instant analysis</Text>
+                  </View>
+                  <View style={styles.featureCardMockImage}>
+                    <Text style={{ fontSize: 48 }}>🍃</Text>
+                  </View>
+                </TouchableOpacity>
+
+                {/* AgroBot AI */}
+                <TouchableOpacity 
+                  style={styles.featureCardDark} 
+                  onPress={() => enterAsGuestWithScreen('AgroBot')}
+                  activeOpacity={0.9}
+                >
+                  <Text style={styles.featureCardEmoji}>🤖</Text>
+                  <Text style={styles.featureCardTitleDark}>AgroBot Support</Text>
+                  <Text style={styles.featureCardDescDark}>Multilingual chatbot answering soil, crop, and pesticide queries customized to your region.</Text>
+                  <View style={styles.featureCardBtn}>
+                    <Text style={styles.featureCardBtnText}>Open AgroBot</Text>
+                  </View>
+                </TouchableOpacity>
+
+                {/* Farmers Hub */}
+                <TouchableOpacity 
+                  style={styles.featureCardPastel} 
+                  onPress={() => enterAsGuestWithScreen('Community')}
+                  activeOpacity={0.9}
+                >
+                  <Text style={styles.featureCardEmoji}>🤝</Text>
+                  <Text style={styles.featureCardTitle}>Farmers Hub</Text>
+                  <Text style={styles.featureCardDesc}>A global network to discuss solutions, post updates, and share advice with other peer farmers.</Text>
+                </TouchableOpacity>
+
+                {/* Weather Alerts */}
+                <TouchableOpacity 
+                  style={styles.featureCardGlass} 
+                  onPress={() => enterAsGuestWithScreen('Environment')}
+                  activeOpacity={0.9}
+                >
+                  <Text style={styles.featureCardEmoji}>⛅</Text>
+                  <Text style={styles.featureCardTitle}>Weather Alerts</Text>
+                  <Text style={styles.featureCardDesc}>Real-time agricultural environment recommendations based on local microclimate data.</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Science-Backed Process */}
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Science-Backed Process</Text>
+                <Text style={styles.sectionSubtitle}>
+                  Three simple steps to transition from vulnerability to professional crop management.
+                </Text>
+              </View>
+
+              <View style={styles.stepsContainer}>
+                <View style={styles.stepItem}>
+                  <View style={styles.stepCircle}><Text style={styles.stepCircleText}>1</Text></View>
+                  <Text style={styles.stepHeader}>Scan</Text>
+                  <Text style={styles.stepDescription}>Capture clear leaf images via our scanner.</Text>
+                </View>
+                <View style={styles.stepItem}>
+                  <View style={styles.stepCircle}><Text style={styles.stepCircleText}>2</Text></View>
+                  <Text style={styles.stepHeader}>Analyze</Text>
+                  <Text style={styles.stepDescription}>AI processes patterns against database standards.</Text>
+                </View>
+                <View style={styles.stepItem}>
+                  <View style={styles.stepCircle}><Text style={styles.stepCircleText}>3</Text></View>
+                  <Text style={styles.stepHeader}>Resolve</Text>
+                  <Text style={styles.stepDescription}>Get localized treatment guides and expert help.</Text>
+                </View>
+              </View>
+
+              <View style={styles.landingFooter}>
+                <Text style={styles.footerText}>© {new Date().getFullYear()} CropGuard Pro. Resilient Harvests.</Text>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </LinearGradient>
+
+        {/* Dynamic Auth Modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showAuthModal}
+          onRequestClose={() => setShowAuthModal(false)}
+        >
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>
+                    {authMode === 'login' ? 'Welcome Back' : 'Create Account'}
+                  </Text>
+                  <TouchableOpacity onPress={() => setShowAuthModal(false)} style={styles.modalCloseBtn}>
+                    <Text style={styles.modalCloseBtnText}>✕</Text>
+                  </TouchableOpacity>
+                </View>
+                
+                <Text style={styles.modalSubtitle}>
                   {authMode === 'login' ? 'Sign in to access your farmer profile' : 'Register your farm and start analyzing'}
                 </Text>
 
@@ -322,14 +547,17 @@ export default function App() {
 
                 <TouchableOpacity
                   style={styles.guestBtn}
-                  onPress={() => setContinueAsGuest(true)}
+                  onPress={() => {
+                    setShowAuthModal(false);
+                    setContinueAsGuest(true);
+                  }}
                 >
                   <Text style={styles.guestBtnText}>Explore as Guest</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
-                  style={{ marginTop: 15 }}
+                  style={{ marginTop: 15, paddingVertical: 5 }}
                 >
                   <Text style={styles.toggleText}>
                     {authMode === 'login'
@@ -338,25 +566,9 @@ export default function App() {
                   </Text>
                 </TouchableOpacity>
               </View>
-
-              {/* Brief Feature Info */}
-              <View style={styles.miniFeatures}>
-                <TouchableOpacity onPress={() => enterAsGuestWithScreen('Diagnostics')}>
-                  <Text style={styles.featureLabel}>🔍 leaf diagnosis</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => enterAsGuestWithScreen('AgroBot')}>
-                  <Text style={styles.featureLabel}>🤖 expert bot</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => enterAsGuestWithScreen('Community')}>
-                  <Text style={styles.featureLabel}>🤝 community</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => enterAsGuestWithScreen('Environment')}>
-                  <Text style={styles.featureLabel}>⛅ weather</Text>
-                </TouchableOpacity>
-              </View>
-            </LinearGradient>
-          </ScrollView>
-        </KeyboardAvoidingView>
+            </View>
+          </KeyboardAvoidingView>
+        </Modal>
       </SafeAreaProvider>
     );
   }
@@ -365,7 +577,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      <AuthContext.Provider value={{ isLoggedIn, user, token, login, logout }}>
+      <AuthContext.Provider value={{ isLoggedIn, user, token, login, logout, exitGuest }}>
         <NavigationContainer>
           <MainAppContent
             initialTab={initialTab}
@@ -379,27 +591,259 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  landingContainer: {
-    flex: 1,
-    padding: 30,
+  fixedHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 100,
+    backgroundColor: 'rgba(2, 44, 34, 0.98)', // Highly opaque deep green matching background
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  headerInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+  },
+  scrollContainer: {
+    paddingHorizontal: 24,
+    paddingTop: Platform.OS === 'ios' ? 120 : 95, // Space to clear the absolute header
+    paddingBottom: 40,
     alignItems: 'center',
   },
-  brandContainer: {
-    alignItems: 'center',
-    marginTop: 40,
+  brandLogoText: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: 'white',
+    letterSpacing: 0.5,
+  },
+  badgeCapsule: {
+    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.3)',
+    marginBottom: 16,
+    alignSelf: 'flex-start',
+  },
+  badgeCapsuleText: {
+    color: '#34d399',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1,
+  },
+  heroSection: {
+    alignSelf: 'stretch',
+    marginBottom: 32,
+  },
+  heroTitle: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: 'white',
+    lineHeight: 32,
+    marginBottom: 12,
+  },
+  heroSubtitle: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.75)',
+    lineHeight: 18,
     marginBottom: 20,
   },
-  brandTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: 'white',
-    marginTop: 10,
+  heroCtaBtn: {
+    backgroundColor: '#10b981',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+    shadowColor: '#10b981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  brandSubtitle: {
+  heroCtaBtnText: {
+    color: 'white',
+    fontWeight: '700',
     fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
-    marginTop: 4,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 16,
+    paddingVertical: 16,
+    marginBottom: 36,
+  },
+  statBox: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#10b981',
+    marginBottom: 2,
+  },
+  statLabel: {
+    fontSize: 9,
+    color: 'rgba(255,255,255,0.6)',
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  statDivider: {
+    width: 1,
+    height: '100%',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+  },
+  sectionHeader: {
+    alignSelf: 'stretch',
+    marginBottom: 20,
+    marginTop: 8,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: 'white',
+    marginBottom: 6,
+  },
+  sectionSubtitle: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.6)',
+    lineHeight: 16,
+  },
+  featuresGrid: {
+    alignSelf: 'stretch',
+    gap: 16,
+    marginBottom: 36,
+  },
+  featureCardMain: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(240, 253, 244, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.2)',
+    borderRadius: 20,
+    padding: 16,
+    alignItems: 'center',
+  },
+  featureCardEmoji: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  featureCardTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: 'white',
+    marginBottom: 4,
+  },
+  featureCardDesc: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.7)',
+    lineHeight: 16,
+    marginBottom: 10,
+  },
+  featureCardBadge: {
+    color: '#34d399',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  featureCardMockImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  featureCardDark: {
+    backgroundColor: 'rgba(30, 41, 59, 0.5)',
+    borderWidth: 1,
+    borderColor: 'rgba(51, 65, 85, 0.5)',
+    borderRadius: 20,
+    padding: 16,
+  },
+  featureCardTitleDark: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: 'white',
+    marginBottom: 4,
+  },
+  featureCardDescDark: {
+    fontSize: 12,
+    color: '#94a3b8',
+    lineHeight: 16,
+    marginBottom: 12,
+  },
+  featureCardBtn: {
+    backgroundColor: '#10b981',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  featureCardBtnText: {
+    color: 'white',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  featureCardPastel: {
+    backgroundColor: 'rgba(255, 247, 237, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 237, 213, 0.2)',
+    borderRadius: 20,
+    padding: 16,
+  },
+  featureCardGlass: {
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 20,
+    padding: 16,
+  },
+  stepsContainer: {
+    alignSelf: 'stretch',
+    gap: 20,
+    marginBottom: 36,
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderRadius: 20,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+  },
+  stepItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  stepCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#10b981',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepCircleText: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 12,
+  },
+  stepHeader: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: 'white',
+    width: 60,
+  },
+  stepDescription: {
+    flex: 1,
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.6)',
+    lineHeight: 14,
   },
   authCard: {
     backgroundColor: 'white',
@@ -469,20 +913,114 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
   },
-  miniFeatures: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  landingFooter: {
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  footerText: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.4)',
+  },
+  navSignInBtn: {
+    borderColor: 'rgba(255,255,255,0.3)',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+  navSignInBtnText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.65)',
     justifyContent: 'center',
-    gap: 10,
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 24,
+    padding: 24,
+    width: '100%',
+    maxWidth: 380,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 10,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: Colors.textMain,
+  },
+  modalCloseBtn: {
+    padding: 6,
+    borderRadius: 16,
+    backgroundColor: '#f1f5f9',
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalCloseBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.textMuted,
+  },
+  modalSubtitle: {
+    fontSize: 12,
+    color: Colors.textMuted,
+    lineHeight: 16,
     marginBottom: 20,
   },
-  featureLabel: {
-    color: 'rgba(255, 255, 255, 0.75)',
-    fontSize: 11,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 12,
-    fontWeight: '600',
-  }
+  scannerVisualContainer: {
+    width: '100%',
+    height: 180,
+    borderRadius: 20,
+    overflow: 'hidden',
+    marginTop: 10,
+    marginBottom: 20,
+    position: 'relative',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: '#0f172a',
+  },
+  scannerImage: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.9,
+  },
+  targetCorner: {
+    position: 'absolute',
+    width: 20,
+    height: 20,
+    borderColor: 'white',
+    opacity: 0.85,
+  },
+  scanLaserLine: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 36,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    borderTopWidth: 1.5,
+    borderBottomWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.7)',
+    shadowColor: '#ffffff',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 3,
+  },
 });

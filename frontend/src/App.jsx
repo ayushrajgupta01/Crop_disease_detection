@@ -128,74 +128,184 @@ function App() {
   // 1. Render Landing Page if not logged in and not continuing as a guest
   if (!isLoggedIn && !continueAsGuest) {
     return (
-      <div className="landing-container">
-        {/* Left Side: Marketing and Features */}
-        <div className="landing-hero">
-          <div className="landing-brand">
+      <div className="landing-page">
+        {/* Top Navbar */}
+        <header className="landing-navbar">
+          <div className="navbar-logo">
             <span>🛡️</span> CropGuard Pro
           </div>
+          <nav className="navbar-links">
+            <a href="#features">Features</a>
+            <a href="#process">Process</a>
+            <a href="#download">Mobile App</a>
+          </nav>
+          <a href="#auth-section" className="navbar-btn">Get Started</a>
+        </header>
 
-          <div className="landing-hero-content">
-            <h2>AI-Powered Crop Diagnostics & Farmer Network</h2>
+        {/* Hero Section */}
+        <section className="hero-section">
+          <div className="hero-content">
+            <div className="hero-badge">NEXT-GEN AGRONOMY</div>
+            <h1>Precision Agriculture at Your Fingertips</h1>
             <p>
-              Analyze crop diseases instantly with AI, consult our conversational agricultural expert (AgroBot), 
-              stay alert with localized weather warnings, and connect with fellow farmers globally.
+              Empowering global agriculture with AI-driven leaf diagnostics, 
+              expert chatbot support, and a collaborative network of farmers.
             </p>
+            <div className="hero-actions">
+              <button className="btn-primary" onClick={() => enterAsGuestWithView('diagnostics')}>
+                Start Leaf Analysis →
+              </button>
+              <a href="#auth-section" className="btn-secondary">
+                Join the Network
+              </a>
+            </div>
+          </div>
+          <div className="hero-image-container">
+            <img 
+              src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800" 
+              alt="Precision Farming" 
+              className="hero-image"
+            />
+          </div>
+        </section>
 
-            <div className="landing-features">
-              <div 
-                className="landing-feature-card" 
-                onClick={() => enterAsGuestWithView('diagnostics')} 
-                style={{ cursor: 'pointer' }}
-              >
-                <h4>🔍 AI Diagnostics</h4>
-                <p>Upload a photo of crop leaves to analyze infections instantly.</p>
+        {/* Stat Bar */}
+        <section className="stats-bar">
+          <div className="stat-item">
+            <h3>98.4%</h3>
+            <p>DETECTION ACCURACY</p>
+          </div>
+          <div className="stat-item">
+            <h3>15k+</h3>
+            <p>ACTIVE FARMERS</p>
+          </div>
+          <div className="stat-item">
+            <h3>24/7</h3>
+            <p>AGROBOT SUPPORT</p>
+          </div>
+          <div className="stat-item">
+            <h3>100%</h3>
+            <p>SECURE DATA</p>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section id="features" className="features-section">
+          <div className="section-header">
+            <h2>Intelligent Pillars of Growth</h2>
+            <p>Our platform combines advanced machine learning with human expertise to ensure your harvest is smart and resilient.</p>
+          </div>
+
+          <div className="features-grid">
+            {/* Card 1: Leaf Scanner */}
+            <div className="feature-card main-feature" onClick={() => enterAsGuestWithView('diagnostics')}>
+              <div className="card-info">
+                <h3>🔍 AI Leaf Scanner</h3>
+                <p>Real-time disease detection using our leaf scan model. Identify pests, fungi infections, and nutrient deficiencies with 98% accuracy in under a minute.</p>
+                <div className="feature-badges">
+                  <span>✓ Instant Analysis</span>
+                  <span>✓ Localized treatment paths</span>
+                </div>
               </div>
-              <div 
-                className="landing-feature-card" 
-                onClick={() => enterAsGuestWithView('chatbot')} 
-                style={{ cursor: 'pointer' }}
-              >
-                <h4>🤖 AgroBot Support</h4>
-                <p>Chat with a dedicated AI trained in soil, crops, and pesticides.</p>
+              <div className="card-mockup">
+                <img src="https://images.unsplash.com/photo-1599933333668-b348981ba31e?w=500" alt="Scanner mockup" />
               </div>
-              <div 
-                className="landing-feature-card" 
-                onClick={() => enterAsGuestWithView('community')} 
-                style={{ cursor: 'pointer' }}
-              >
-                <h4>🤝 Farmers Hub</h4>
-                <p>Discuss crop solutions, post updates, and share advice.</p>
+            </div>
+
+            {/* Card 2: AgroBot */}
+            <div className="feature-card dark-card" onClick={() => enterAsGuestWithView('chatbot')}>
+              <div className="card-info">
+                <h3>🤖 AgroBot Chatbot</h3>
+                <p>Multilingual chat support that answers your agricultural queries tailored to your specific region, crop types, and local soil conditions.</p>
+                <button className="feature-btn">Open Assistant</button>
               </div>
-              <div 
-                className="landing-feature-card" 
-                onClick={() => enterAsGuestWithView('environment')} 
-                style={{ cursor: 'pointer' }}
-              >
-                <h4>⛅ Weather Alerts</h4>
-                <p>Receive real-time recommendations based on local metrics.</p>
+            </div>
+
+            {/* Card 3: Community */}
+            <div className="feature-card pastel-card" onClick={() => enterAsGuestWithView('community')}>
+              <div className="card-info">
+                <h3>🤝 Farmers Community</h3>
+                <p>A global network for shared knowledge. Share insights with peers, discuss crop diseases, and collaborate on risk mitigation.</p>
+                <div className="avatar-stack">
+                  <span className="avatar">👥</span>
+                  <span className="avatar">👤</span>
+                  <span className="avatar">🌾</span>
+                  <span className="avatar-plus">+15k</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 4: Precision Calculators */}
+            <div className="feature-card" onClick={() => enterAsGuestWithView('calculators')}>
+              <div className="card-info">
+                <h3>🧮 Precision Calculators</h3>
+                <p>Optimize your fertilizer dosages, water requirements, and crop harvest planning based on your unique field metrics.</p>
+                <div className="metric-badges">
+                  <div className="metric-badge">ROI Increase <strong>+24%</strong></div>
+                  <div className="metric-badge">Water Saved <strong>-15%</strong></div>
+                </div>
               </div>
             </div>
           </div>
+        </section>
 
-          <div className="landing-stats">
-            <div className="landing-stat-item">
-              <h3>98.4%</h3>
-              <p>Detection Accuracy</p>
+        {/* Process Section */}
+        <section id="process" className="process-section">
+          <div className="section-header">
+            <h2>Science-Backed Process</h2>
+            <p>Three simple steps to transition from vulnerability to professional field management with CropGuard Pro.</p>
+          </div>
+
+          <div className="process-steps">
+            <div className="step-card">
+              <div className="step-number">1</div>
+              <h4>Scan</h4>
+              <p>Capture high-resolution images of your crops using our intuitive interface.</p>
             </div>
-            <div className="landing-stat-item">
-              <h3>15k+</h3>
-              <p>Active Farmers</p>
+            <div className="step-card">
+              <div className="step-number">2</div>
+              <h4>Analyze</h4>
+              <p>Our AI engine processes the leaf pattern against millions of healthy and diseased samples.</p>
             </div>
-            <div className="landing-stat-item">
-              <h3>24/7</h3>
-              <p>Expert AgroBot AI</p>
+            <div className="step-card">
+              <div className="step-number">3</div>
+              <h4>Resolve</h4>
+              <p>Receive an action-oriented treatment plan and connect with experts to implement immediate solutions.</p>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Right Side: Auth Forms */}
-        <div className="landing-auth">
+        {/* Download App Section */}
+        <section id="download" className="download-section">
+          <div className="download-content">
+            <h2>The Future of Farming in Your Pocket</h2>
+            <p>
+              Download the CropGuard app to access free monitoring, automated weather alerts, 
+              and our full suite of precision tools anywhere, even offline.
+            </p>
+            <div className="store-buttons">
+              <div className="store-badge">🤖 Google Play</div>
+              <div className="store-badge">🍎 App Store</div>
+            </div>
+          </div>
+          <div className="download-mockup">
+            <div className="phone-frame">
+              <div className="phone-screen">
+                <div className="phone-header">CropGuard Pro</div>
+                <div className="phone-body">
+                  <div className="metric-box">
+                    <p>Field Health Score</p>
+                    <h3>92%</h3>
+                  </div>
+                  <div className="scan-circle">🔍 Scan leaf</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Authentication Section */}
+        <section id="auth-section" className="auth-section">
           <div className="landing-auth-card">
             <div className="landing-auth-header">
               <h3>{authMode === 'login' ? 'Welcome Back' : 'Create Account'}</h3>
@@ -295,7 +405,41 @@ function App() {
               )}
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* Footer Section */}
+        <footer className="landing-footer">
+          <div className="footer-cols">
+            <div className="footer-col branding">
+              <h4>🛡️ CropGuard Pro</h4>
+              <p>Delivering precision technology and collaborative network tools to modern agriculture, for smart and resilient harvests.</p>
+            </div>
+            <div className="footer-col links">
+              <h4>Platform</h4>
+              <a href="#features" onClick={() => enterAsGuestWithView('diagnostics')}>AI Diagnostics</a>
+              <a href="#features" onClick={() => enterAsGuestWithView('chatbot')}>AgroBot AI</a>
+              <a href="#features" onClick={() => enterAsGuestWithView('community')}>Community Network</a>
+            </div>
+            <div className="footer-col links">
+              <h4>Resources</h4>
+              <a href="#features" onClick={() => enterAsGuestWithView('library')}>Plant Library</a>
+              <a href="#features" onClick={() => enterAsGuestWithView('calculators')}>Agri-Calculators</a>
+              <a href="#features" onClick={() => enterAsGuestWithView('environment')}>Weather Alerts</a>
+            </div>
+            <div className="footer-col newsletter">
+              <h4>Get Started</h4>
+              <p>Join thousands of farmers optimizing their crop yields today.</p>
+              <a href="#auth-section" className="footer-cta-btn">Join Now</a>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>&copy; {new Date().getFullYear()} CropGuard Pro. All rights reserved.</p>
+            <div className="footer-terms">
+              <a href="#auth-section">Privacy Policy</a>
+              <a href="#auth-section">Terms of Service</a>
+            </div>
+          </div>
+        </footer>
       </div>
     );
   }
