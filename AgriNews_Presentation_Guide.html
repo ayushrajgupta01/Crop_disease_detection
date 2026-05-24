@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriNews Feature - Presentation Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --primary: #10b981;
+      --primary-dark: #064e3b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      margin: 0;
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 30px;
+    }
+
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .live-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #4ade80;
+      box-shadow: 0 0 10px #4ade80;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin: 0;
+      background: linear-gradient(135deg, #34d399, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin-top: 10px;
+    }
+
+    .section {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: #38bdf8;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #cbd5e1;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    li {
+      color: #cbd5e1;
+      margin-bottom: 12px;
+      font-size: 0.98rem;
+    }
+
+    li strong {
+      color: #ffffff;
+    }
+
+    .code-term {
+      font-family: monospace;
+      background-color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #f43f5e;
+      font-size: 0.9rem;
+    }
+
+    .pitch-box {
+      background: linear-gradient(135deg, #022c22, #064e3b);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 16px;
+      padding: 25px;
+      margin-top: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pitch-box::before {
+      content: '“';
+      position: absolute;
+      top: -20px;
+      left: 10px;
+      font-size: 10rem;
+      color: rgba(52, 211, 153, 0.08);
+      font-family: Georgia, serif;
+    }
+
+    .pitch-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #34d399;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .pitch-text {
+      font-size: 1.1rem;
+      color: #e2e8f0;
+      font-style: italic;
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 60px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
+    }
+
+    /* Print styling rules */
+    @media print {
+      body {
+        background-color: #ffffff;
+        color: #000000;
+        padding: 0;
+      }
+      .section {
+        background-color: #ffffff;
+        border: none;
+        border-bottom: 1px solid #e2e8f0;
+        box-shadow: none;
+        padding: 20px 0;
+        page-break-inside: avoid;
+      }
+      h1 {
+        background: none;
+        -webkit-text-fill-color: #064e3b;
+        color: #064e3b;
+      }
+      h2 {
+        color: #064e3b;
+        border-bottom: 2px solid #064e3b;
+      }
+      h3 {
+        color: #0c4a6e;
+      }
+      p, li {
+        color: #1e293b;
+      }
+      li strong {
+        color: #000000;
+      }
+      .code-term {
+        background-color: #f1f5f9;
+        color: #b91c1c;
+      }
+      .pitch-box {
+        background: #f0fdf4;
+        border: 1px dashed #10b981;
+      }
+      .pitch-title {
+        color: #15803d;
+      }
+      .pitch-text {
+        color: #166534;
+      }
+      .footer {
+        color: #64748b;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="logo-container">
+        <div class="live-dot"></div>
+        <h1>AgriNews Feature Presentation Guide</h1>
+      </div>
+      <div class="subtitle">CropGuard Pro — Prototype Pitch Resource</div>
+    </header>
+
+    <!-- Section 1: Architecture -->
+    <div class="section">
+      <h2>1. Enabling the Live News Feature (The Architecture)</h2>
+      <p>Here is how the system handles news delivery, parsing, and offline fallbacks:</p>
+      <ul>
+        <li>
+          <strong>Live RSS Integration:</strong> We establish a live pipeline to the official XML news feed of <strong>AgFunderNews</strong> (a prominent global agricultural investment and innovation platform).
+        </li>
+        <li>
+          <strong>XML-to-JSON Parsing:</strong> To consume this data on-device without parsing bloated XML files directly in React Native, the app queries an online proxy service (<span class="code-term">rss2json.com</span>) to receive structured JSON objects instantly.
+        </li>
+        <li>
+          <strong>Seamless Offline Fallback:</strong> If the user is offline or the RSS proxy experiences downtime, the system automatically triggers a fallback database of <strong>18 highly curated agricultural stories</strong>.
+        </li>
+        <li>
+          <strong>Smart Category & Cover Matching:</strong> Incoming live feed items that do not include direct thumbnail cover images are scanned using a text-matching algorithm. It checks titles and descriptions for key agricultural terminology (e.g. *disease*, *drone*, *monsoon*) and assigns corresponding category badges (*Disease Alert*, *Water Management*, *Technology*) along with matching Unsplash crop photography.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 2: Refresh Cache Busting -->
+    <div class="section">
+      <h2>2. The Instant Refresh Mechanism (Bypassing Server Caching)</h2>
+      <p>If asked how the app guarantees real-time fresh news on refreshing instead of repeating old data:</p>
+      <ul>
+        <li>
+          <strong>The CDN Caching Obstacle:</strong> Free RSS parsing proxies utilize Content Delivery Networks (CDNs) that cache feed queries server-side for several hours to reduce database calls. Standard mobile requests would fetch this cached copy, displaying stale news.
+        </li>
+        <li>
+          <strong>Target-Level Cache Busting:</strong> Our refresh function implements cache-busting directly inside the proxy parameters. We append a dynamic timestamp parameter to the actual target URL:
+          <br>
+          <span class="code-term">https://agfundernews.com/feed/?t=${Date.now()}</span>
+        </li>
+        <li>
+          <strong>Forced Re-Fetch:</strong> Because the timestamp is unique down to the millisecond, the proxy server is unable to find a cached entry for the URL. It is forced to bypass its CDN cache, make a fresh XML request to the publisher site, and deliver the absolute latest headlines to the user instantly.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 3: IT Standards Layout -->
+    <div class="section">
+      <h2>3. Modern UI Design Standards</h2>
+      <p>The screen is built with user experience and layout standards at its core:</p>
+      <ul>
+        <li>
+          <strong>Dynamic Sizing:</strong> Using a parent container <span class="code-term">onLayout</span> hook, the application measures the exact visible height between the top header bar and the bottom tab navigator. This guarantees cards fill the page without content cutoffs.
+        </li>
+        <li>
+          <strong>Single-Page Scroll Snapping:</strong> Using FlatList's <span class="code-term">pagingEnabled</span> and snap properties, the feed scrolls snap-to-page, providing a premium vertical swipe experience.
+        </li>
+        <li>
+          <strong>Polished Dark Mode:</strong> Built with a rich slate dark theme to maximize contrast and focus on high-definition agricultural imagery.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 4: Pitch Box -->
+    <div class="pitch-box">
+      <div class="pitch-title">Executive Pitch for Judges</div>
+      <p class="pitch-text">
+        "We designed the AgriNews feed to offer farmers an immersive, full-screen vertical swipe experience. By linking directly to live global agricultural networks, applying text-based categorization algorithms for visual mapping, and using custom cache-busting queries, we ensure farmers receive real-time, high-contrast, visual industry news the second they hit refresh."
+      </p>
+    </div>
+
+    <div class="footer">
+      Generated for CropGuard Pro Prototype Presentation Guide • 2026
+    </div>
+  </div>
+
+  <script>
+    // Short script to print file directly if the user needs it
+    // window.print();
+  </script>
+</body>
+</html>

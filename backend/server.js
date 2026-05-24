@@ -341,7 +341,7 @@ app.get('/api/posts', async (req, res) => {
                     location: 'Karnataka',
                     crop: 'Tomato',
                     content: 'My tomato crops are finally recovering after using the recommended copper spray from AgroBot. Thanks everyone!',
-                    image: 'https://images.unsplash.com/photo-1592840331052-16e15c2c6f95?auto=format&fit=crop&q=80&w=400',
+                    image: 'https://images.unsplash.com/photo-1558818498-28c1e002b655?auto=format&fit=crop&q=80&w=400',
                     likes: [],
                     comments: []
                 },
@@ -351,7 +351,7 @@ app.get('/api/posts', async (req, res) => {
                     location: 'Maharashtra',
                     crop: 'Rice',
                     content: 'Anyone else seeing early signs of Rice Blast in the Pune region? The humidity has been very high lately.',
-                    image: 'https://images.unsplash.com/photo-1536630596251-b01c62536286?auto=format&fit=crop&q=80&w=400',
+                    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=400',
                     likes: [],
                     comments: []
                 }

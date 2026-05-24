@@ -13,12 +13,37 @@ import {
   Linking,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Heart, Share2, ExternalLink, Rss, RefreshCw, Clock, Tag } from 'lucide-react-native';
+import { Heart, Share2, ExternalLink, Clock, Tag } from 'lucide-react-native';
 import { Colors } from '../theme/colors';
+import ScreenHero from '../components/ScreenHero';
 
-// RSS-to-JSON proxy for live agriculture news. Falls back to curated mock data.
-const RSS_FEED_URL =
-  'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fagfundernews.com%2Ffeed%2F&count=12';
+// Multiple live agriculture RSS sources — fetched fresh on every refresh.
+const RSS_SOURCES = [
+  { name: 'AgFunder News', url: 'https://agfundernews.com/feed/' },
+  { name: 'The Hindu Agri', url: 'https://www.thehindu.com/business/agri-business/feeder/default.rss' },
+  { name: 'Business Line', url: 'https://www.thehindubusinessline.com/news/agri-business/feeder/default.rss' },
+  { name: 'Deccan Herald', url: 'https://www.deccanherald.com/rss/agriculture.rss' },
+];
+
+const RSS2JSON = 'https://api.rss2json.com/v1/api.json';
+
+const fetchRssFeed = async (feedUrl, sourceName) => {
+  const bust = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+  const feedWithBust = feedUrl.includes('?') ? `${feedUrl}&_=${bust}` : `${feedUrl}?_=${bust}`;
+  const requestUrl = `${RSS2JSON}?rss_url=${encodeURIComponent(feedWithBust)}&count=12&_=${bust}`;
+
+  const response = await fetch(requestUrl, {
+    headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' },
+  });
+  if (!response.ok) throw new Error(`Feed failed: ${sourceName}`);
+
+  const data = await response.json();
+  if (data.status !== 'ok' || !data.items?.length) {
+    throw new Error(`No items: ${sourceName}`);
+  }
+
+  return data.items.map((item) => ({ ...item, _sourceName: sourceName }));
+};
 
 const MOCK_NEWS = [
   {
@@ -116,6 +141,126 @@ const MOCK_NEWS = [
     color: ['#0c4a6e', '#0ea5e9'],
     emoji: '🌧️',
     image: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=800',
+  },
+  {
+    id: 'm9',
+    title: 'Drip Irrigation Subsidy Lifted to 90% for Small Farmers',
+    summary:
+      'The Ministry of Water Resources announced an increase in micro-irrigation subsidies to 90% for smallholder farmers, aiming to conserve groundwater while boosting crop water-use efficiency.',
+    category: 'Water Management',
+    source: 'Jal Shakti News',
+    time: '2 days ago',
+    color: ['#0c4a6e', '#0ea5e9'],
+    emoji: '💧',
+    image: 'https://images.unsplash.com/photo-1563514223300-6d42d326f959?w=800',
+  },
+  {
+    id: 'm10',
+    title: 'Organic Fertilizer Market Set to Double as Soil Health Awareness Rises',
+    summary:
+      'Driven by consumer demand for chemical-free food, the Indian organic fertilizer market is projected to reach $2.5 billion by 2028, with vermicompost and bio-fertilizers leading the growth.',
+    category: 'Bio-Farming',
+    source: 'Organic Farming Review',
+    time: '3 days ago',
+    color: ['#065f46', '#10b981'],
+    emoji: '🍃',
+    image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800',
+  },
+  {
+    id: 'm11',
+    title: 'Indian Millet Exports Surge by 45% to Middle East and Europe',
+    summary:
+      'Leveraging the global superfood trend, exports of Bajra, Ragi, and Jowar rose by 45% in the last fiscal year, bringing higher profits to dryland farmers in Rajasthan and Karnataka.',
+    category: 'Exports',
+    source: 'Global Trade Agri',
+    time: '3 days ago',
+    color: ['#78350f', '#f59e0b'],
+    emoji: '🌾',
+    image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800',
+  },
+  {
+    id: 'm12',
+    title: 'New Cold Storage Corridor to Reduce Post-Harvest Losses by 50%',
+    summary:
+      'A public-private cold chain corridor covering major fruit-growing regions in Himachal and Maharashtra will open next month, reducing post-harvest transport spoilage by half.',
+    category: 'Logistics',
+    source: 'Agri Supply Chain',
+    time: '4 days ago',
+    color: ['#1e3a8a', '#3b82f6'],
+    emoji: '❄️',
+    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800',
+  },
+  {
+    id: 'm13',
+    title: 'Over 5 Lakh Solar Pumps Installed Under PM-KUSUM Scheme',
+    summary:
+      'The solar pump distribution program hit a major milestone, allowing farmers to run tube-wells during the day without relying on erratic grid power, while reducing overall diesel expenses.',
+    category: 'Energy',
+    source: 'Solar Grid India',
+    time: '4 days ago',
+    color: ['#7c2d12', '#ea580c'],
+    emoji: '☀️',
+    image: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800',
+  },
+  {
+    id: 'm14',
+    title: 'Handheld Soil Scanner Provides Reports in 60 Seconds',
+    summary:
+      'A newly patented handheld NIR spectrometer allows farmers to scan nitrogen, phosphorus, and potassium levels instantly in the field, eliminating the 2-week lab wait times.',
+    category: 'Technology',
+    source: 'Science For Farm',
+    time: '5 days ago',
+    color: ['#4c1d95', '#7c3aed'],
+    emoji: '🧪',
+    image: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800',
+  },
+  {
+    id: 'm15',
+    title: 'Restrictions Lifted on Non-Basmati Rice Exports After Stock Surplus',
+    summary:
+      'With state warehouses overflowing, the government has eased export levies on non-basmati white rice, offering relief to rice millers and farmers looking for higher international prices.',
+    category: 'Market',
+    source: 'Grain Trade Today',
+    time: '5 days ago',
+    color: ['#831843', '#ec4899'],
+    emoji: '✈️',
+    image: 'https://images.unsplash.com/photo-1536304997881-a372c179924b?w=800',
+  },
+  {
+    id: 'm16',
+    title: 'DGCA Approves Simplified License for Agri-Drone Operators',
+    summary:
+      'To accelerate drone adoption for pesticide and fertilizer spraying, the aviation authority has streamlined license processes, reducing certification costs and training duration by 60%.',
+    category: 'Policy',
+    source: 'AeroNews India',
+    time: '6 days ago',
+    color: ['#064e3b', '#059669'],
+    emoji: '🚁',
+    image: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800',
+  },
+  {
+    id: 'm17',
+    title: 'Indian Vanilla Prices Skyrocket 30% Amid Global Supply Shortage',
+    summary:
+      'Vanilla farmers in Kerala and Karnataka are seeing record returns as Madagascar supply drops, prompting many to invest in shade-net cultivation for this high-value crop.',
+    category: 'Production',
+    source: 'Spice Board Bulletin',
+    time: '6 days ago',
+    color: ['#065f46', '#10b981'],
+    emoji: '🌱',
+    image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800',
+  },
+  {
+    id: 'm18',
+    title: 'Insurance Firms Use Satellite Imagery for Instant Crop Claims',
+    summary:
+      'Satellite-driven damage detection enables payout processing within 48 hours of weather events, eliminating the tedious physical surveys that historically delayed insurance payouts for months.',
+    category: 'Disease Alert',
+    source: 'Agri Insure Today',
+    time: '1 week ago',
+    color: ['#7c2d12', '#ea580c'],
+    emoji: '📊',
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800',
   },
 ];
 
@@ -292,16 +437,20 @@ const AgriNewsScreen = () => {
   };
 
   const seedMockData = useCallback(() => {
-    const seeded = MOCK_NEWS.map((n) => ({
-      ...n,
-      likes: Math.floor(Math.random() * 200) + 10,
-      liked: false,
-    }));
-    setNews(seeded);
+    // Rotate mock articles by time window when all live feeds are unavailable
+    const start = Math.floor(Date.now() / 45000) % MOCK_NEWS.length;
+    const rotated = [...MOCK_NEWS.slice(start), ...MOCK_NEWS.slice(0, start)];
+    setNews(
+      rotated.map((n, i) => ({
+        ...n,
+        id: `${n.id}-r${start}-${i}`,
+        likes: Math.floor(Math.random() * 200) + 10,
+        liked: false,
+      }))
+    );
   }, []);
 
   const buildFromFeed = (items) => {
-    const now = Date.now();
     return items.map((item, idx) => {
       let image = null;
       if (item.thumbnail) {
@@ -328,27 +477,148 @@ const AgriNewsScreen = () => {
         }
       }
 
+      const titleLower = (item.title || '').toLowerCase();
+      const contentLower = (item.description || item.content || '').toLowerCase();
+      const combinedText = `${titleLower} ${contentLower}`;
+
+      let category = 'Live Update';
+      let color = [Colors.primaryDark, Colors.primary];
+      let emoji = '🌱';
+
+      if (
+        combinedText.includes('pest') ||
+        combinedText.includes('disease') ||
+        combinedText.includes('blight') ||
+        combinedText.includes('insect') ||
+        combinedText.includes('fungus') ||
+        combinedText.includes('infestation')
+      ) {
+        category = 'Disease Alert';
+        color = ['#7c2d12', '#ea580c'];
+        emoji = '⚠️';
+        if (!image) {
+          image = 'https://images.unsplash.com/photo-1599933333668-b348981ba31e?w=800';
+        }
+      } else if (
+        combinedText.includes('ai') ||
+        combinedText.includes('drone') ||
+        combinedText.includes('tech') ||
+        combinedText.includes('sensor') ||
+        combinedText.includes('robot') ||
+        combinedText.includes('precision') ||
+        combinedText.includes('digital')
+      ) {
+        category = 'Technology';
+        color = ['#065f46', '#10b981'];
+        emoji = '🤖';
+        if (!image) {
+          image = 'https://images.unsplash.com/photo-1592982537447-6f2a6a0c7c18?w=800';
+        }
+      } else if (
+        combinedText.includes('market') ||
+        combinedText.includes('price') ||
+        combinedText.includes('fund') ||
+        combinedText.includes('raise') ||
+        combinedText.includes('startup') ||
+        combinedText.includes('invest') ||
+        combinedText.includes('deal') ||
+        combinedText.includes('trade') ||
+        combinedText.includes('finance') ||
+        combinedText.includes('budget')
+      ) {
+        category = 'Market';
+        color = ['#831843', '#ec4899'];
+        emoji = '📉';
+        if (!image) {
+          image = 'https://images.unsplash.com/photo-1507206130007-8e718b204a80?w=800';
+        }
+      } else if (
+        combinedText.includes('water') ||
+        combinedText.includes('irrigation') ||
+        combinedText.includes('drip') ||
+        combinedText.includes('rain') ||
+        combinedText.includes('monsoon')
+      ) {
+        category = 'Water Management';
+        color = ['#0c4a6e', '#0ea5e9'];
+        emoji = '💧';
+        if (!image) {
+          image = 'https://images.unsplash.com/photo-1563514223300-6d42d326f959?w=800';
+        }
+      } else if (
+        combinedText.includes('climate') ||
+        combinedText.includes('weather') ||
+        combinedText.includes('carbon') ||
+        combinedText.includes('warm') ||
+        combinedText.includes('emission')
+      ) {
+        category = 'Climate';
+        color = ['#0f172a', '#38bdf8'];
+        emoji = '🌧️';
+        if (!image) {
+          image = 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=800';
+        }
+      } else if (
+        combinedText.includes('fertilizer') ||
+        combinedText.includes('organic') ||
+        combinedText.includes('soil') ||
+        combinedText.includes('urea')
+      ) {
+        category = 'Bio-Farming';
+        color = ['#065f46', '#10b981'];
+        emoji = '🍃';
+        if (!image) {
+          image = 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800';
+        }
+      } else if (
+        combinedText.includes('harvest') ||
+        combinedText.includes('yield') ||
+        combinedText.includes('crop') ||
+        combinedText.includes('production') ||
+        combinedText.includes('wheat') ||
+        combinedText.includes('rice') ||
+        combinedText.includes('grain')
+      ) {
+        category = 'Production';
+        color = ['#78350f', '#f59e0b'];
+        emoji = '🌾';
+        if (!image) {
+          image = 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800';
+        }
+      } else {
+        if (!image) {
+          const landscapes = [
+            'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800',
+            'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800',
+            'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800',
+          ];
+          image = landscapes[idx % landscapes.length];
+        }
+      }
+
+      const stableId = item.guid || item.link || `${item.title}-${idx}`;
+
       return {
-        id: String(now + idx),
+        id: String(stableId).replace(/[^a-zA-Z0-9-_]/g, '_').slice(0, 120),
         title: item.title || 'Agriculture Update',
         summary: item.description
           ? item.description.replace(/<[^>]+>/g, '').trim()
           : item.content
           ? item.content.replace(/<[^>]+>/g, '').trim()
           : '',
-        category: 'Live News',
-        source: item.author || 'Agri News',
+        category,
+        source: item._sourceName || item.author || 'Agri News',
         time: item.pubDate
           ? new Date(item.pubDate).toLocaleDateString('en-IN', {
               day: 'numeric',
               month: 'short',
             })
           : 'Recent',
-        color: [Colors.primaryDark, Colors.primary],
-        emoji: '🌱',
+        color,
+        emoji,
         likes: Math.floor(Math.random() * 120) + 5,
         liked: false,
-        image: image,
+        image,
         link: item.link,
       };
     });
@@ -356,17 +626,31 @@ const AgriNewsScreen = () => {
 
   const fetchNews = useCallback(async () => {
     try {
-      const response = await fetch(RSS_FEED_URL);
-      if (!response.ok) throw new Error('Feed unavailable');
-      const data = await response.json();
-      if (data.status === 'ok' && data.items && data.items.length > 0) {
-        const live = buildFromFeed(data.items);
-        const extra = MOCK_NEWS.slice(0, 4).map((n) => ({
-          ...n,
-          likes: Math.floor(Math.random() * 120) + 5,
-          liked: false,
-        }));
-        setNews([...live, ...extra]);
+      const results = await Promise.allSettled(
+        RSS_SOURCES.map((src) => fetchRssFeed(src.url, src.name))
+      );
+
+      const merged = [];
+      const seen = new Set();
+
+      results.forEach((result) => {
+        if (result.status !== 'fulfilled') return;
+        result.value.forEach((item) => {
+          const key = (item.link || item.guid || item.title || '').trim().toLowerCase();
+          if (!key || seen.has(key)) return;
+          seen.add(key);
+          merged.push(item);
+        });
+      });
+
+      merged.sort((a, b) => {
+        const da = a.pubDate ? new Date(a.pubDate).getTime() : 0;
+        const db = b.pubDate ? new Date(b.pubDate).getTime() : 0;
+        return db - da;
+      });
+
+      if (merged.length > 0) {
+        setNews(buildFromFeed(merged.slice(0, 24)));
       } else {
         seedMockData();
       }
@@ -438,34 +722,7 @@ const AgriNewsScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <LinearGradient
-        colors={['#064e3b', '#022c22']}
-        style={styles.header}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-      >
-        <View style={styles.headerLeft}>
-          <View style={styles.liveDot} />
-          <Text style={styles.headerTitle}>AgriNews Live</Text>
-        </View>
-        <View style={styles.headerRight}>
-          {lastUpdated ? (
-            <Text style={styles.headerUpdated}>Updated {lastUpdated}</Text>
-          ) : null}
-          <TouchableOpacity onPress={handleRefresh} style={styles.refreshBtn}>
-            <RefreshCw size={16} color="white" />
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
-
-      {/* Sub-header */}
-      <View style={styles.subHeader}>
-        <Rss size={13} color={Colors.primary} />
-        <Text style={styles.subHeaderText} numberOfLines={1}>
-          Live agriculture headlines • {news.length} stories
-        </Text>
-      </View>
+      <ScreenHero authOnly gradient="green" />
 
       {/* Feed Container */}
       <Animated.View
@@ -530,63 +787,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     marginTop: 16,
-  },
-
-  // Header
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  liveDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#4ade80',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: 'white',
-    letterSpacing: 0.4,
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  headerUpdated: {
-    fontSize: 11,
-    color: 'rgba(255,255,255,0.7)',
-  },
-  refreshBtn: {
-    padding: 6,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-  },
-
-  // Sub-header
-  subHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    backgroundColor: '#1e293b',
-    borderBottomWidth: 1,
-    borderBottomColor: '#334155',
-  },
-  subHeaderText: {
-    fontSize: 12,
-    color: '#94a3b8',
-    flex: 1,
   },
 
   // List
